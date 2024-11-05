@@ -1,5 +1,4 @@
-# encryption_script.py
-
+import argparse
 from cryptography.fernet import Fernet
 import os
 
@@ -46,18 +45,21 @@ def decrypt_folder(folder_path, key):
             decrypt_file(file_path, key)
 
 if __name__ == "__main__":
-    # Example usage
-    generate_key()
+    parser = argparse.ArgumentParser(description="Encrypt or decrypt files and folders.")
+    parser.add_argument("action", choices=["encrypt", "decrypt"], help="Action to perform: encrypt or decrypt")
+    parser.add_argument("path", help="Path to the file or folder")
+    args = parser.parse_args()
+
     key = load_key()
 
-    # Encrypt a single file
-    encrypt_file("example.txt", key)
-
-    # Decrypt a single file
-    decrypt_file("example.txt", key)
-
-    # Encrypt all files in a folder
-    encrypt_folder("example_folder", key)
-
-    # Decrypt all files in a folder
-    decrypt_folder("example_folder", key)
+    if args.action == "encrypt":
+        if os.path.isfile(args.path):
+            encrypt_file(args.path, key)
+        elif os.path.isdir(args.path):
+            encrypt_folder(args.path, key)
+    elif args.action == "decrypt":
+        if os.path.isfile(args.path):
+            decrypt_file(args.path, key)
+        elif os.path.isdir(args.path):
+            decrypt_folder(args.path, key)
+        
